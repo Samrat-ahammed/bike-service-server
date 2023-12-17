@@ -28,6 +28,7 @@ async function run() {
 
     const serviceCollection = client.db("BikeDB").collection("service");
     const userCollection = client.db("BikeDB").collection("users");
+    const cardCollection = client.db("BikeDB").collection("cart");
 
     // All services .........
     app.get("/service", async (req, res) => {
@@ -65,7 +66,7 @@ async function run() {
 
     app.put("/serviceUpdate/:id", async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
+      const filter = { _id: id };
       updateService = req.body;
       updateDoc = {
         $set: {
@@ -116,6 +117,21 @@ async function run() {
         },
       };
       const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
+    // Service Card ..................
+
+    app.post("/cart", async (req, res) => {
+      const query = req.body;
+      const result = await cardCollection.insertOne(query);
+      res.send(result);
+    });
+
+    app.get("/cart/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await cardCollection.find(query).toArray();
       res.send(result);
     });
 
