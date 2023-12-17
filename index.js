@@ -120,6 +120,17 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/user/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+      let admin = true;
+      if (user) {
+        admin = user?.role === "admin";
+      }
+      res.send(admin);
+    });
+
     // Service Card ..................
 
     app.post("/cart", async (req, res) => {
